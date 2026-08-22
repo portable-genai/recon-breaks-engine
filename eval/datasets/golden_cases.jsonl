@@ -1,0 +1,15 @@
+# Independent golden oracle for the offline reconciliation fixture (adapters/local/_recon_fixture).
+# These expectations are DECLARED BY HAND, never computed from the engine: the eval scores the
+# engine's output against them, so a metric cannot pass by reading the pipeline's own answer.
+# Each line is one expected match (with the pass that should reconcile it) or one expected break
+# (with the type the engine should assign). Entry ids reference the fixture rows.
+{"kind": "match", "pass": "exact", "entries": ["A1", "B1"]}
+{"kind": "match", "pass": "tolerance", "entries": ["A2", "B2"]}
+{"kind": "match", "pass": "many_to_one", "entries": ["A3a", "A3b", "B3"]}
+{"kind": "match", "pass": "fx", "entries": ["A4", "B4"]}
+{"kind": "match", "pass": "fee", "entries": ["A5", "B5"]}
+{"kind": "break", "type": "timing", "entries": ["A8", "B8"]}
+{"kind": "break", "type": "missing", "entries": ["A6"]}
+{"kind": "break", "type": "duplicate", "entries": ["B7a", "B7b"]}
+{"kind": "break", "type": "fx", "entries": ["A9", "B9"]}
+{"kind": "break", "type": "fee", "entries": ["A10", "B10"]}

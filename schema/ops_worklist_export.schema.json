@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://recon-breaks-engine.example/schema/ops_worklist_export.schema.json",
+  "title": "Ops worklist export",
+  "description": "The versioned ops-worklist metrics contract F1 emits per reconciliation run and F5 (control room) consumes. F2 (disputes) conforms to the same shape. Amounts are counts, not money; every number is engine-computed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "feed_id",
+    "as_of",
+    "queue_depth",
+    "throughput",
+    "aging_buckets",
+    "sla_clock_state"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "ops-worklist-export/v1",
+      "description": "Pins the contract. F5's drift guard requires this exact value."
+    },
+    "feed_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The feed pairing this worklist belongs to."
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "The explicit instant the run was computed against (ISO 8601 date)."
+    },
+    "queue_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of unreconciled breaks in the worklist."
+    },
+    "throughput": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of groups the matcher reconciled this run."
+    },
+    "aging_buckets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["d0_1", "d2_3", "d4_7", "d8_plus"],
+      "description": "Break counts by age band in days. Bands are inclusive of their upper bound; d8_plus is open-ended.",
+      "properties": {
+        "d0_1": { "type": "integer", "minimum": 0 },
+        "d2_3": { "type": "integer", "minimum": 0 },
+        "d4_7": { "type": "integer", "minimum": 0 },
+        "d8_plus": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "sla_clock_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["breached", "within", "escalate_age_days"],
+      "description": "How many breaks have breached the aging SLA versus remain within it, plus the threshold used.",
+      "properties": {
+        "breached": { "type": "integer", "minimum": 0 },
+        "within": { "type": "integer", "minimum": 0 },
+        "escalate_age_days": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

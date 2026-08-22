@@ -1,0 +1,8 @@
+{
+  "locals": {
+    "render_region": "asia-southeast1",
+    "render_package_name": "recon_breaks_engine",
+    "render_env_prefix": "RECONBREAKS",
+    "render_catalog_id": "F1"
+  }
+}
