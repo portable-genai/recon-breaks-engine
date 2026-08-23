@@ -126,6 +126,15 @@ def _rules(args: argparse.Namespace) -> list[tuple[str, str, str]]:
             rf"(?=[ \t]+(?:--?[a-z]|[a-z][\w-]*))(?![ \t]+(?:import|as)\b)",
             args.cli,
         ),
+        #   3. the Dockerfile exec form: ENTRYPOINT ["cmd"] and CMD ["cmd", ...] execute the
+        #      console script by NAME with nothing after it for shape 2's lookahead to see.
+        #      Two rules rather than one because a lookbehind must be fixed-width.
+        ("cli", rf'(?<=^ENTRYPOINT \["){package}(?=")', args.cli),
+        ("cli", rf'(?<=^CMD \["){package}(?=")', args.cli),
+        #   4. the command alone on a line: a usage example with no arguments at all, the other
+        #      shape the subcommand lookahead cannot see. Anchored to the whole line so the
+        #      bare token inside prose or a listing still belongs to the package rule.
+        ("cli", rf"^{package}(?=[ \t]*$)", args.cli),
         # The python package: import paths, the src/ tree, the adapter binding map, wheel config.
         ("package", package, args.package),
         # The env-var prefix. Matched WITHOUT the trailing underscore so both RECONBREAKS_PROFILE

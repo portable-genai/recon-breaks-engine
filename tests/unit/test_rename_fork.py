@@ -98,6 +98,28 @@ def test_a_documented_shell_invocation_becomes_the_command() -> None:
     assert rewritten == "acme-migrate plan --profile local\n"
 
 
+def test_a_bare_invocation_with_no_arguments_still_becomes_the_command() -> None:
+    """The exec form and a bare usage line name the command; neither offers a subcommand anchor.
+
+    ``ENTRYPOINT ["<cli>"]`` executes the console script by NAME, and a usage example may show
+    the command alone on a line. Both lack the following token the shell-invocation rule keys
+    on, so without their own anchors they fall through to the bare package rule and are
+    rewritten to the *package* name: a fork's image would then try to exec a command that no
+    longer exists.
+    """
+    docs = (
+        f'ENTRYPOINT ["{_MODULE._OLD_CLI}"]\n'
+        f'CMD ["{_MODULE._OLD_CLI}", "serve"]\n'
+        f"{_MODULE._OLD_CLI}\n"
+    )
+
+    rewritten = _apply(docs, _MODULE._rules(_args()))
+
+    assert rewritten == (
+        'ENTRYPOINT ["acme-migrate"]\nCMD ["acme-migrate", "serve"]\nacme-migrate\n'
+    )
+
+
 def test_the_scripts_own_constants_are_each_rewritten_to_their_own_value() -> None:
     """A fork must be able to rename itself a SECOND time.
 
