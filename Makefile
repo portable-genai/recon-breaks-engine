@@ -1,4 +1,4 @@
-.PHONY: install install-unlocked lock lint fmt test test-integration eval gate audit run-api \
+.PHONY: install install-unlocked lock lint fmt test test-integration eval plugin gate audit run-api \
         demo demo-selftest demo-static demo-server portability docs-check \
         ui-install ui-check ui-dev drop-ui
 
@@ -55,11 +55,17 @@ test-integration:
 eval:
 	python eval/run_eval.py
 
+# Render the Agent Plugins 1.0.0 directory from what this repo already declares. Skills and
+# an MCP server are both detected rather than assumed, so this tree packages what it has:
+# its vendored skills, and no server, because it declares no governed tool catalog.
+plugin:
+	python scripts/render_plugin.py --dest dist/plugin
+
 # The full OFFLINE gate. It is deliberately network-free, so it runs on a plane and in a
 # no-egress environment; the dependency audit needs a vulnerability feed and therefore lives in
 # `make audit` locally and in the hard-gate workflow's supply-chain job, where it is a HARD
 # failure, not an advisory one.
-gate: lint test eval
+gate: lint test eval plugin
 
 # The supply-chain half of the gate (needs network). CI runs the same two commands.
 audit:

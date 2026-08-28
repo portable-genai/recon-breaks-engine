@@ -34,6 +34,10 @@ dev = [
   "mypy>=1.10",
   "pytest>=8.2",
   "types-PyYAML>=6.0",
+  # Validates the rendered Agent Plugins manifest against the specification schema the
+  # commons vendors. A HARD dev dependency rather than an optional one, so that guard can
+  # never skip into green: a manifest nobody validated is the same as no manifest at all.
+  "jsonschema>=4.26",
 ]
 # Managed cloud SDKs (lazy-imported by the gcp adapters). NOT installed by the local gate.
 gcp = [
