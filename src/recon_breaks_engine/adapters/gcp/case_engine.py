@@ -26,7 +26,7 @@ class CloudCaseEngine:
         if not base_url:
             raise RuntimeError(
                 "review_url is not configured, so an escalation case cannot be opened on the "
-                "Hrz7 case spine. Set HRZ_HUMAN_REVIEW_URL (config/settings.yaml review_url)."
+                "Hrz7 case spine. Set HUMAN_REVIEW_URL (config/settings.yaml review_url)."
             )
         # A real deployment POSTs to {base_url}/v1/cases here with the workflow and clock; the
         # deadline it returns must equal as_of + clock_days, which is what the local recorder
