@@ -164,7 +164,7 @@ wired in this tree today, checked against `config/settings.yaml` and the R1 to R
 
 | Concern | Owner | State in this repo |
 |---|---|---|
-| Human review and maker-checker console | **Hrz7** | **Wired.** `ports/review_router.py` with an adapter in all three families over the shared `review-kit`; the console base URL is `HRZ_HUMAN_REVIEW_URL`. Every escalation is routed in the same call that produced it (rule R8). |
+| Human review and maker-checker console | **Hrz7** | **Wired.** `ports/review_router.py` with an adapter in all three families over the shared `review-kit`; the console base URL is `HUMAN_REVIEW_URL`. Every escalation is routed in the same call that produced it (rule R8). |
 | Escalation cases with an aging clock | **Hrz7** (case spine) | **Wired.** `ports/case_engine.py`; the managed adapter opens the case on Hrz7's `/v1/cases` and refuses when no console is configured. The BREACH decision is the engine's, made before the port is called. |
 | AI-quality and promotion gate | **Hrz4** | **Client half wired.** `eval/run_eval.py --mode gate` uses the shared `PromotionGateClient` and refuses to run off the managed profile. Registering this repo's metric bundle and thresholds with Hrz4 is still open (P-08 / R5 in `COMPLIANCE.md`). |
 | Tracing | **Hrz5** | **Wired by configuration.** `adapters/gcp/tracer.py` exports OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, and straight to Cloud Trace when it is not. |

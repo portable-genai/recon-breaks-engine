@@ -88,8 +88,8 @@ the guard can go red rather than passing vacuously.
 ## What about outbound service-to-service calls?
 
 The routed review and the escalation case both go to Hrz7. The managed review router submits over
-the shared `review-kit` with the OUTBOUND credentials `HRZ7_S2S_TOKEN` and
-`HRZ7_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
+the shared `review-kit` with the OUTBOUND credentials `HUMAN_REVIEW_S2S_TOKEN` and
+`HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
 `RECONBREAKS_S2S_TOKEN`. The kit refuses a plaintext non-loopback URL and a missing bearer at
 construction, and the managed router REFUSES when no console is configured rather than swallowing
 the escalation.
