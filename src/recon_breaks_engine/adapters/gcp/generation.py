@@ -18,7 +18,7 @@ class CloudGenerationAdapter:
         self._settings = settings
 
     def draft(self, prompt: str) -> str:
-        import google.generativeai as genai  # noqa: F401  (lazy: managed edge is real)
+        from google import genai  # noqa: F401  (lazy: managed edge is real)
 
         raise RuntimeError(
             "the managed generation adapter needs a configured model endpoint; wire it in the "
