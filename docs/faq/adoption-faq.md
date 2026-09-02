@@ -94,8 +94,8 @@ It is guarded, and the guard is inside the gate. A step lives in `demo.STEPS` AN
 the demo makes but nobody verifies cannot exist. That same test drives the whole arc through the
 REAL local adapters inside `make gate`, asserts the tamper step actually goes RED (a demo with no
 failing panel is a sales deck), and asserts the demo surface imports no cloud SDK in a FRESH
-interpreter. `make demo-selftest`, `make portability`, `make demo-static` and `make docs-check`
-run in the demo-gate workflow on every push.
+interpreter. `make demo-selftest` and `make portability` run in the hosted check on every
+pull request and every push to main.
 
 Keep the pattern when you extend it: put the numbers a check reads in the step's `facts` dict,
 never only in the rendered rows, because a check that parses prose breaks on a wording change.
