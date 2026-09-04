@@ -123,7 +123,8 @@ class RankingPolicy:
 
 @dataclass(frozen=True, slots=True)
 class AgingPolicy:
-    """When a break is old enough or large enough to open an escalation case on Hrz7.
+    """When a break is old enough or large enough to open an escalation case on
+    human-review-console.
 
     A break breaches when its age in days reaches ``escalate_age_days`` OR its amount reaches
     ``escalate_amount_minor``. Both are deployment policy; the engine only compares.

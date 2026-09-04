@@ -28,8 +28,8 @@ copied into N repositories is N Protocols and only one of them gets fixed when a
   deliberately not a no-op. This is the dev, test and CI default and the working proof that the
   domain runs entirely off-cloud.
 - **`gcp`**: the managed stack. BigQuery feeds and worklist store, a managed generation surface,
-  Cloud Logging WORM audit, IAP identity, OpenTelemetry tracing, the Hrz4 promotion client and
-  the Hrz7 review and case submissions. Every cloud import is LAZY, inside the method, so the
+  Cloud Logging WORM audit, IAP identity, OpenTelemetry tracing, the `model-quality-gate` promotion client and
+  the `human-review-console` review and case submissions. Every cloud import is LAZY, inside the method, so the
   other two profiles import this tree with no cloud SDK installed.
 - **`onprem`**: fail-fast placeholders that satisfy the same Protocols and RAISE. That is the
   reversibility proof (P-12): a placeholder that returned quietly would make the portability
@@ -102,8 +102,8 @@ Controls perimeter. Moving to a second in-country region is a tfvars change, not
   `platform` process while any of them is active. That is deliberate: a Cloud Run service must
   not become healthy while an operation on its primary journey is a placeholder.
 - **Tamper evidence is scoped to what the local sink can prove.** `portability_demo.py` says so
-  explicitly. Production tamper evidence is the locked Cloud Logging bucket's job, or Hrz5's.
-- **The shared audit sink is not bound.** Traces can reach the Hrz5 collector by setting
+  explicitly. Production tamper evidence is the locked Cloud Logging bucket's job, or `agent-observability`'s.
+- **The shared audit sink is not bound.** Traces can reach the `agent-observability` collector by setting
   `OTEL_EXPORTER_OTLP_ENDPOINT`; the audit stream cannot yet. See the R2 row in
   [`../../COMPLIANCE.md`](../../COMPLIANCE.md).
 - **The Terraform posture has no test in the offline gate.** `infra/terraform/production_edge.tftest.hcl`

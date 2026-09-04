@@ -26,7 +26,9 @@ def main(argv: list[str] | None = None) -> int:
     rec.add_argument("feed_b")
     rec.add_argument("--as-of", default="", help="ISO date to reconcile against (default today).")
     rec.add_argument("--actor", default="cli-user@bank.example")
-    rec.add_argument("--tenant", default="", help="Tenant partition asserted to Hrz7.")
+    rec.add_argument(
+        "--tenant", default="", help="Tenant partition asserted to human-review-console."
+    )
 
     args = parser.parse_args(argv)
     container = build_container()

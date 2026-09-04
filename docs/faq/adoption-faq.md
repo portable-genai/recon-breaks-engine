@@ -122,7 +122,7 @@ before every commit rather than waiting for a CI tick that will not arrive.
 - The **`ui/` console is not wired to this vertical**. Its security boundary is complete and
   tested, but the page still calls the template's `/v1/triage` route, which this service does not
   serve. Point it at `/v1/reconcile` and build the worklist views.
-- **Hrz1, Hrz2, Hrz3 and the shared Hrz5 audit sink are not bound.** See the R1 to R5 rows in
+- **`agent-guardrail-gateway`, `enterprise-knowledge-base`, `agent-registry` and the shared `agent-observability` sink are not bound.** See the R1 to R5 rows in
   [`../../COMPLIANCE.md`](../../COMPLIANCE.md) and the boundary table in
   [features-faq.md](features-faq.md).
 - **No `policy:` settings block** yet (item B4 above).

@@ -291,7 +291,8 @@ def reconcile(
     """Reconcile two feeds; the audit actor and review maker are the verified principal.
 
     The deterministic engine reconciles and types every break; the model only narrates. Rule R8:
-    every drafted resolution sets ``requires_human_review`` and is ROUTED to the Hrz7 console from
+    every drafted resolution sets ``requires_human_review`` and is ROUTED to the
+    human-review-console from
     inside the service, in the same request that produced it, and a breaching break additionally
     opens an escalation case. This service ships no posting port, so nothing here can auto-post.
     """

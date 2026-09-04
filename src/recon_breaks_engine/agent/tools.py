@@ -2,16 +2,16 @@
 
 Design rules, in the order they matter:
 
-* **No business logic here.** The domain service decides HOW; the model only decides WHICH tool
-  to call. A rule that lives in a tool wrapper is a rule the CLI and the API do not have.
-* **Rule R8 applies on this path too.** Reconciliation routes every drafted resolution to Hrz7
-  and opens a case for a breaching break from INSIDE the service, in the same call. An agent
-  surface that only returned the worklist would be a third place an escalation can quietly stop.
-* **Import-safe without a runtime.** ``google.adk`` is imported lazily inside
-  :func:`build_function_tools`, so these callables are importable, testable and runnable with no
-  ADK and no cloud SDK installed.
-* **Typed and documented.** A runtime derives each tool's name, description and JSON parameter
-  schema from the signature and the docstring, so both are part of the contract.
+* **No business logic here.** The domain service decides HOW; the model only decides WHICH tool to
+  call. A rule that lives in a tool wrapper is a rule the CLI and the API do not have. * **Rule R8
+  applies on this path too.** Reconciliation routes every drafted resolution to human-review-console
+  and opens a case for a breaching break from INSIDE the service, in the same call. An agent surface
+  that only returned the worklist would be a third place an escalation can quietly stop. *
+  **Import-safe without a runtime.** ``google.adk`` is imported lazily inside
+  :func:`build_function_tools`, so these callables are importable, testable and runnable with no ADK
+  and no cloud SDK installed. * **Typed and documented.** A runtime derives each tool's name,
+  description and JSON parameter schema from the signature and the docstring, so both are part of
+  the contract.
 """
 
 from __future__ import annotations

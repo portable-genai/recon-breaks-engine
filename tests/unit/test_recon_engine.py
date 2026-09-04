@@ -282,7 +282,9 @@ class _SpyGeneration:
 
 
 class _SpyCaseEngine:
-    """The real local case recorder with a tap on the request that would cross to Hrz7."""
+    """The real local case recorder with a tap on the request that would cross to
+    human-review-console.
+    """
 
     def __init__(self, inner: object) -> None:
         self._inner = inner
@@ -294,7 +296,8 @@ class _SpyCaseEngine:
 
 
 def test_a_feed_row_carrying_personal_data_reaches_no_sink_unmasked() -> None:
-    """Redact before ANYTHING leaves: the model, the WORM record, Hrz7 review, Hrz7 cases, the API.
+    """Redact before ANYTHING leaves: the model, the WORM record, human-review-console review,
+    human-review-console cases, the API.
 
     The fixture's PII-carrying nostro row is the realistic input this is about. Its reference is
     the payer's national identifier, its counterparty name repeats it, and the warehouse supplied
@@ -303,7 +306,8 @@ def test_a_feed_row_carrying_personal_data_reaches_no_sink_unmasked() -> None:
     a boundary that holds at all of them but one: the service redacted ``redacted_summary`` and
     then handed the SAME audit event its citations untouched, so an identifier the summary had
     just lost was persisted verbatim, in the same immutable row, in a record nobody can clean
-    afterwards. The Hrz7 payload had the same shape one level down, masking a citation's snippet
+    afterwards. The human-review-console payload had the same shape one level down, masking a
+    citation's snippet
     and leaving its source_id and title, and the escalation case masked nothing at all.
 
     The attribution fields are deliberately not scanned (see :data:`_ATTRIBUTION`); everything
@@ -343,11 +347,13 @@ def test_a_feed_row_carrying_personal_data_reaches_no_sink_unmasked() -> None:
     clean("the WORM record", rows)
 
     pending = container.review_router.outbox.pending()
-    assert pending, "guard the guard: nothing is proved if nothing was routed to Hrz7"
-    clean("the Hrz7 review payload", pending)
+    assert pending, (
+        "guard the guard: nothing is proved if nothing was routed to human-review-console"
+    )
+    clean("the human-review-console review payload", pending)
 
     assert cases.requests, "guard the guard: nothing is proved if no escalation case was opened"
-    clean("the Hrz7 case request", cases.requests)
+    clean("the human-review-console case request", cases.requests)
 
     # The serialised API body, not the in-memory ``ReconRun``. The engine necessarily HOLDS the
     # raw feed text while it reconciles (``Break.reference_key`` and ``Break.counterparty_key``

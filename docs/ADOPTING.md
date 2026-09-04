@@ -34,7 +34,7 @@ A7). `domain/kernel.py` owns the vertical-neutral contracts and imports nothing 
 
 If your product is another *back-office reconciliation or exception-queue* service, most of the
 hexagon transfers directly: the three profiles, the deterministic-decision pattern, the ranked
-worklist, the tenant boundary, the eval gate and the Hrz7 review routing. You replace the feed
+worklist, the tenant boundary, the eval gate and the `human-review-console` review routing. You replace the feed
 shape and the break taxonomy, and you retune the policy numbers.
 
 ## 2. Core-vs-adopter-owned files (so upstream merges stay mechanical)
@@ -144,8 +144,8 @@ The script deliberately does NOT touch the human decisions below.
    for your feeds: a fork inherits a green gate that measures the WRONG reconciliation until you
    do. The harness structure and the four metrics (`match_accuracy`, `break_typing_accuracy`,
    `groundedness`, `pii_safety`) are generic; the expected matches and break types are yours. The
-   Hrz4 bundle name in `eval/run_eval.py` is also renamed by the script, and registering it with
-   Hrz4 is a separate step (see section 5).
+   `model-quality-gate` bundle name in `eval/run_eval.py` is also renamed by the script, and registering it with
+   `model-quality-gate` is a separate step (see section 5).
 7. **Deployment posture.** Review the Dockerfile (digest-pinned base, non-root uid 10001,
    `HEALTHCHECK` on `/healthz`), the whole of `infra/terraform/` (the residency allowlist in
    `variables.tf`, the Org Policy guardrails in `org_policy.tf`, the regional CMEK ring in
@@ -164,15 +164,15 @@ wired in this tree today, checked against `config/settings.yaml` and the R1 to R
 
 | Concern | Owner | State in this repo |
 |---|---|---|
-| Human review and maker-checker console | **Hrz7** | **Wired.** `ports/review_router.py` with an adapter in all three families over the shared `review-kit`; the console base URL is `HUMAN_REVIEW_URL`. Every escalation is routed in the same call that produced it (rule R8). |
-| Escalation cases with an aging clock | **Hrz7** (case spine) | **Wired.** `ports/case_engine.py`; the managed adapter opens the case on Hrz7's `/v1/cases` and refuses when no console is configured. The BREACH decision is the engine's, made before the port is called. |
-| AI-quality and promotion gate | **Hrz4** | **Client half wired.** `eval/run_eval.py --mode gate` uses the shared `PromotionGateClient` and refuses to run off the managed profile. Registering this repo's metric bundle and thresholds with Hrz4 is still open (P-08 / R5 in `COMPLIANCE.md`). |
-| Tracing | **Hrz5** | **Wired by configuration.** `adapters/gcp/tracer.py` exports OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, and straight to Cloud Trace when it is not. |
-| Shared immutable audit sink | **Hrz5** | **NOT wired.** The audit trail is local (hash-chained and anchored) or a locked Cloud Logging bucket. Binding the shared sink is the open R2 item. |
-| Agent registry, identity and entitlements | **Hrz3** | **NOT wired.** The A2A card is published at `/.well-known/agent-card.json` and built from the same tool table the runtime binds, but nothing registers it. Open R4 item. |
-| Runtime guardrail: prompt-injection defence and output filtering | **Hrz1** | **NOT wired.** There is no `GuardrailPort`. Redaction is in-repo through the shared `pii-kit`, which is not the same control. Open R1 item, and it becomes mandatory the moment untrusted text reaches a model. |
-| Governed knowledge base and grounded retrieval | **Hrz2** | **Not applicable today.** This service reconciles feed rows and performs no retrieval, so there is nothing to ground. Adding a retrieval port makes Hrz2 mandatory (R3) together with P-05. |
-| Project intake validation | **Rsk3** | An intake action, not a code control. Record the validation reference in `COMPLIANCE.md` when the project passes it (R6). |
+| Human review and maker-checker console | `human-review-console` | **Wired.** `ports/review_router.py` with an adapter in all three families over the shared `review-kit`; the console base URL is `HUMAN_REVIEW_URL`. Every escalation is routed in the same call that produced it (rule R8). |
+| Escalation cases with an aging clock | `human-review-console` (case spine) | **Wired.** `ports/case_engine.py`; the managed adapter opens the case on `human-review-console`'s `/v1/cases` and refuses when no console is configured. The BREACH decision is the engine's, made before the port is called. |
+| AI-quality and promotion gate | `model-quality-gate` | **Client half wired.** `eval/run_eval.py --mode gate` uses the shared `PromotionGateClient` and refuses to run off the managed profile. Registering this repo's metric bundle and thresholds with `model-quality-gate` is still open (P-08 / R5 in `COMPLIANCE.md`). |
+| Tracing | `agent-observability` | **Wired by configuration.** `adapters/gcp/tracer.py` exports OTLP to the `agent-observability` collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set, and straight to Cloud Trace when it is not. |
+| Shared immutable audit sink | `agent-observability` | **NOT wired.** The audit trail is local (hash-chained and anchored) or a locked Cloud Logging bucket. Binding the shared sink is the open R2 item. |
+| Agent registry, identity and entitlements | `agent-registry` | **NOT wired.** The A2A card is published at `/.well-known/agent-card.json` and built from the same tool table the runtime binds, but nothing registers it. Open R4 item. |
+| Runtime guardrail: prompt-injection defence and output filtering | `agent-guardrail-gateway` | **NOT wired.** There is no `GuardrailPort`. Redaction is in-repo through the shared `pii-kit`, which is not the same control. Open R1 item, and it becomes mandatory the moment untrusted text reaches a model. |
+| Governed knowledge base and grounded retrieval | `enterprise-knowledge-base` | **Not applicable today.** This service reconciles feed rows and performs no retrieval, so there is nothing to ground. Adding a retrieval port makes `enterprise-knowledge-base` mandatory (R3) together with P-05. |
+| Project intake validation | `architecture-validator` | An intake action, not a code control. Record the validation reference in `COMPLIANCE.md` when the project passes it (R6). |
 | The downstream ops worklist view | **F5** (control room and handover), with **F2** conforming | This repo OWNS the export schema and F5 consumes it. Do not re-implement the queue view here; see [`ops-metrics-contract.md`](ops-metrics-contract.md) and `schema/ops_worklist_export.schema.json`. |
 
 ## 6. Adoption checklist
@@ -185,5 +185,5 @@ wired in this tree today, checked against `config/settings.yaml` and the R1 to R
 - [ ] Replaced the fixture feeds and every synthetic fixture with your own synthetic data.
 - [ ] Rebuilt the eval golden set for your feed pairing and re-reviewed the four thresholds.
 - [ ] Reviewed the deploy posture (Dockerfile, the whole of `infra/terraform/`, the bind address) and read the managed-profile preflight in `managed_readiness.py`.
-- [ ] Decided which sibling systems you integrate versus stub, and wired your Hrz7 endpoint.
+- [ ] Decided which sibling systems you integrate versus stub, and wired your `human-review-console` endpoint.
 - [ ] Recorded your baseline upstream tag so you can take future fixes.

@@ -231,7 +231,7 @@ CANONICAL_CALLS: dict[str, PortCase] = {
     "case_engine": PortCase(
         invoke=_case_invoke,
         answered=_case_answered,
-        # With no Hrz7 console configured the managed case engine must refuse, not swallow.
+        # With no human-review-console configured the managed case engine must refuse, not swallow.
         managed_refusal=(RuntimeError,),
         detail="open one escalation case with an aging clock",
     ),
@@ -254,7 +254,7 @@ CANONICAL_CALLS: dict[str, PortCase] = {
     "evaluation": PortCase(
         invoke=_evaluation_invoke,
         answered=_evaluation_answered,
-        # The managed gate reaches Hrz4 over HTTP, which is unreachable offline.
+        # The managed gate reaches model-quality-gate over HTTP, which is unreachable offline.
         managed_refusal=(Exception,),
         detail="score one golden dataset through the promotion authority",
     ),

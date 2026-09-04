@@ -12,7 +12,7 @@ No, and the reason is structural rather than a setting. Every drafted resolution
 `requires_human_review`, and setting it is not the escalation: the `ReviewRouterPort.route` call
 in the SAME act is, and the API, the CLI and the agent tool all route in the same call that
 produced the result (`tests/unit/test_review_routing.py` is the standing gate). A break that
-BREACHES its aging or amount threshold additionally opens an escalation case on the Hrz7 case
+BREACHES its aging or amount threshold additionally opens an escalation case on the `human-review-console` case
 spine with a clock taken from policy. A `CRITICAL` band asks the console for TWO approvals rather
 than one (`adapters/_review_payload.py`).
 
@@ -90,11 +90,11 @@ The offline eval gate (`eval/run_eval.py`) scores four metrics against an INDEPE
 oracle rather than against the pipeline's own output: `match_accuracy` and
 `break_typing_accuracy` at 0.90, `groundedness` and `pii_safety` at 0.99. It runs on every merge
 in `make gate` and in its own required workflow. `--mode gate` is the promotion path and delegates
-the verdict to the **Hrz4** AI-quality service, refusing to run off the managed profile, because
+the verdict to the `model-quality-gate` AI-quality service, refusing to run off the managed profile, because
 a promotion certified by a laptop with no quality service is certified by nothing.
 
 Two open items to record in a risk assessment: this repo's metric bundle and thresholds are NOT
-yet registered with Hrz4 (P-08 and R5), and the managed generation adapter is still a placeholder
+yet registered with `model-quality-gate` (P-08 and R5), and the managed generation adapter is still a placeholder
 that the process preflight refuses to serve, so there is no live-model eval to review.
 
 ### Which controls are still open?
@@ -104,12 +104,12 @@ that the process preflight refuses to serve, so there is no live-model eval to r
 - **P-05 grounding, P-10 resilience, P-11 cost and latency**: `TODO (repo owner)`. There is no
   retrieval port and no live model call yet, so there is nothing to ground, route or cache;
   timeouts, a circuit breaker and a documented kill switch per outbound dependency are owed.
-- **R1 guardrail (Hrz1)**: not wired. No `GuardrailPort` exists. Redaction is a different control.
-- **R2 shared audit sink and traces (Hrz5)**: half wired. Tracing exports OTLP to the Hrz5
+- **R1 guardrail (`agent-guardrail-gateway`)**: not wired. No `GuardrailPort` exists. Redaction is a different control.
+- **R2 shared audit sink and traces (`agent-observability`)**: half wired. Tracing exports OTLP to the `agent-observability`
   collector when configured; the audit stream does not reach the shared sink.
-- **R3 knowledge base (Hrz2)**: not applicable today, mandatory the moment retrieval appears.
-- **R4 agent registry (Hrz3)**: the A2A card is published but not registered.
-- **R6 intake validation (Rsk3)**: an intake action, not a code control. Record the reference.
+- **R3 knowledge base (`enterprise-knowledge-base`)**: not applicable today, mandatory the moment retrieval appears.
+- **R4 agent registry (`agent-registry`)**: the A2A card is published but not registered.
+- **R6 intake validation (`architecture-validator`)**: an intake action, not a code control. Record the reference.
 - **Tenant isolation**: the domain boundary and the store-side filter exist and are tested; the
   `COMPLIANCE.md` row still describes the earlier state and should be re-read against
   `worklist_access.py` and `tests/unit/test_worklist_store_authz.py`.
