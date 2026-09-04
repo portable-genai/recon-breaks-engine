@@ -37,7 +37,7 @@ The order in `domain/resolution_service.py::_grounded_hypothesis` is load-bearin
 4. Any exception from the generation port, including a lazy-import failure with no SDK present,
    falls back to the same deterministic line. A model outage degrades the prose and nothing else.
 5. The resulting summary and subject are redacted again before they reach the audit write or the
-   review payload, and the resolution sets `requires_human_review` and is ROUTED to Hrz7 in the
+   review payload, and the resolution sets `requires_human_review` and is ROUTED to `human-review-console` in the
    same call (rule R8).
 
 The offline eval scores `groundedness` at a 0.99 threshold alongside `pii_safety` at 0.99,
@@ -67,11 +67,10 @@ only the prose, never the guarantee.
   exposes it as a deliberate control.
 - **Evaluation of the live model**: today's `groundedness` score measures the deterministic
   offline narrator, which cannot fail the check by construction. Add a managed-profile eval run
-  through the **Hrz4** promotion gate that scores a real model's drafts against the same golden
-  cases, and register this repo's metric bundle and thresholds with Hrz4 (the open P-08 and R5
+  through the `model-quality-gate` promotion gate that scores a real model's drafts against the same golden
+  cases, and register this repo's metric bundle and thresholds with `model-quality-gate` (the open P-08 and R5
   items in [`../COMPLIANCE.md`](../COMPLIANCE.md)).
-- **Prompt-injection screening** on the feed text before generation, through the **Hrz1**
-  guardrail gateway, failing closed to deterministic-only when the screen is unavailable. There is
+- **Prompt-injection screening** on the feed text before generation, through the `agent-guardrail-gateway`, failing closed to deterministic-only when the screen is unavailable. There is
   no `GuardrailPort` in `ports/` today; this is the open R1 item.
 - **Token and cost telemetry**: `ObservabilityTracerPort.record_token_usage` exists on the port
   and the managed tracer implements it, but no generation call reports usage, because no

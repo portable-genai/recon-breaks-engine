@@ -1,11 +1,11 @@
 """Local CaseEnginePort: a recording adapter that computes deadlines from the same clock data.
 
-Stands in for Hrz7's ``/v1/cases`` surface offline. It computes the case deadline from the
-request's ``as_of`` plus ``clock_days`` (the clock the deterministic engine took from the break's
-workflow policy) exactly as the managed case engine would from its ``ClockSpec``, and records the
-opened case in memory so the demo, the tests and the eval can assert that a breaching break
-opened exactly one case with the right deadline. It NEVER decides breach and never closes a case:
-those are the engine's and a human's jobs respectively.
+Stands in for human-review-console's ``/v1/cases`` surface offline. It computes the case deadline
+from the request's ``as_of`` plus ``clock_days`` (the clock the deterministic engine took from the
+break's workflow policy) exactly as the managed case engine would from its ``ClockSpec``, and
+records the opened case in memory so the demo, the tests and the eval can assert that a breaching
+break opened exactly one case with the right deadline. It NEVER decides breach and never closes a
+case: those are the engine's and a human's jobs respectively.
 """
 
 from __future__ import annotations
@@ -17,7 +17,9 @@ from ...ports.case_engine import CaseHandle, CaseRequest
 
 
 class LocalCaseRecorder:
-    """Record opened cases and return a handle with a clock-derived deadline (no live Hrz7)."""
+    """Record opened cases and return a handle with a clock-derived deadline (no live
+    human-review-console).
+    """
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings

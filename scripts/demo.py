@@ -144,7 +144,7 @@ STEPS: tuple[Step, ...] = (
             "The residual breaks, ranked by a deterministic score. Setting a flag is not the "
             "escalation; routing is. Every break is handed to the human-review console in the "
             "same call that drafted it, and an aged or high-value break also opens a case on the "
-            "Hrz7 case spine. Nothing posts to a ledger: there is no posting port."
+            "human-review-console case spine. Nothing posts to a ledger: there is no posting port."
         ),
     ),
     Step(
@@ -343,7 +343,6 @@ class DemoRun:
             title="Deployment",
             rows=(
                 Row("Service", SERVICE_NAME),
-                Row("Catalog id", CATALOG_ID),
                 Row("Profile", self.settings.profile, "ok"),
                 Row("Profiles bound for every port", ", ".join(profiles)),
                 Row("Residency region", self.settings.region),
@@ -444,7 +443,10 @@ class DemoRun:
                 for h in self.container.case_engine.opened
             )
             or (Row("cases", "none breached the clock", "ok"),),
-            note="A breaching break opens a case on the Hrz7 case spine with an aging clock.",
+            note=(
+                "A breaching break opens a case on the human-review-console case spine with an "
+                "aging clock."
+            ),
         )
         facts = {
             "requires_human_review": True,
@@ -709,7 +711,6 @@ class DemoRun:
         current = self.results[-1]
         return {
             "service": SERVICE_NAME,
-            "catalog_id": CATALOG_ID,
             "repository": REPOSITORY,
             "profile": self.settings.profile,
             "region": self.settings.region,

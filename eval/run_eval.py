@@ -4,12 +4,11 @@
 Two named layers via ``--mode`` (the scaffold is ``agent_eval_kit.eval_main``):
 
 * **smoke** (default) - the offline pre-merge check CI runs on every change. It drives the real
-  deterministic engine over the fixture feeds and scores four metrics AGAINST AN INDEPENDENT
-  GOLDEN ORACLE (``datasets/golden_cases.jsonl``, hand-declared expected matches and break
-  types), never against the pipeline's own output. ``tests/unit/test_not_falsely_green.py``
-  proves each metric can go red.
-* **gate** - the promotion verdict from the shared Hrz4 authority (requires the ``gcp``
-  profile), via ``agent_eval_kit.PromotionGateClient``.
+  deterministic engine over the fixture feeds and scores four metrics AGAINST AN INDEPENDENT GOLDEN
+  ORACLE (``datasets/golden_cases.jsonl``, hand-declared expected matches and break types), never
+  against the pipeline's own output. ``tests/unit/test_not_falsely_green.py`` proves each metric can
+  go red. * **gate** - the promotion verdict from the shared model-quality-gate authority (requires
+  the ``gcp`` profile), via ``agent_eval_kit.PromotionGateClient``.
 
 Exit is ``0`` iff every metric meets its threshold (and, in gate mode, the authority agrees).
 """
@@ -47,7 +46,8 @@ THRESHOLDS: dict[str, float] = {
     "groundedness": 0.99,
     "pii_safety": 0.99,
 }
-#: The registered Hrz4 metric bundle for this vertical (Hrz4 owns the metrics + thresholds).
+#: The registered model-quality-gate metric bundle for this vertical (model-quality-gate owns the
+#: metrics + thresholds).
 _BUNDLE = "recon-breaks-engine"
 
 _DIGITS = re.compile(r"\d+")
@@ -223,6 +223,6 @@ if __name__ == "__main__":
             smoke=run_smoke,
             gate=run_gate,
             default_dataset=DEFAULT_DATASET,
-            description="Offline / Hrz4 evaluation gate for F1.",
+            description="Offline / model-quality-gate for F1.",
         )
     )

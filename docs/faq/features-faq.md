@@ -77,9 +77,9 @@ numbers a human acts on never came from it. See [`../model-card.md`](../model-ca
 ### Is anything auto-approved? Does it post a journal?
 
 No, twice over. `requires_human_review` is set on every resolution, and the resolution is ROUTED
-to the **Hrz7** human-review console in the same call that produced it (rule R8), through the
+to the `human-review-console` in the same call that produced it (rule R8), through the
 shared `review-kit`, with the payload redacted before the wire. A break that BREACHES its
-aging or amount threshold additionally opens an escalation case on the Hrz7 case spine with a
+aging or amount threshold additionally opens an escalation case on the `human-review-console` case spine with a
 clock taken from policy.
 
 More fundamentally: **this service ships no posting port at all**. A drafted journal is text a
@@ -110,13 +110,13 @@ not wired yet.
 
 | Concern | Owner | This repo's role |
 |---|---|---|
-| Human review and maker-checker console | **Hrz7** | Routes every escalation to it (rule R8) over the shared review kit. Does not implement the console. |
-| Escalation cases with an aging clock | **Hrz7** case spine | Opens a case when the engine decides a break has breached. The BREACH decision is this engine's; the workflow and the clock are configuration. |
-| AI-quality and promotion gate | **Hrz4** | `eval/run_eval.py --mode gate` asks it for the promotion verdict and refuses to run off the managed profile. Registering the bundle is still open. |
-| Observability and tracing | **Hrz5** | Exports OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. The shared immutable audit sink is NOT bound yet. |
-| Agent registry, identity and entitlements | **Hrz3** | Publishes an A2A card built from the same tool table the runtime binds. Registration is NOT done. |
-| Runtime guardrail: prompt-injection defence, output filtering | **Hrz1** | NOT wired. There is no `GuardrailPort` here. Redaction through `pii-kit` is a different control. |
-| Governed knowledge base and grounded retrieval | **Hrz2** | Not used: this vertical performs no retrieval. A fork that adds one must integrate Hrz2. |
+| Human review and maker-checker console | `human-review-console` | Routes every escalation to it (rule R8) over the shared review kit. Does not implement the console. |
+| Escalation cases with an aging clock | `human-review-console` case spine | Opens a case when the engine decides a break has breached. The BREACH decision is this engine's; the workflow and the clock are configuration. |
+| AI-quality and promotion gate | `model-quality-gate` | `eval/run_eval.py --mode gate` asks it for the promotion verdict and refuses to run off the managed profile. Registering the bundle is still open. |
+| Observability and tracing | `agent-observability` | Exports OTLP to the `agent-observability` collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. The shared immutable audit sink is NOT bound yet. |
+| Agent registry, identity and entitlements | `agent-registry` | Publishes an A2A card built from the same tool table the runtime binds. Registration is NOT done. |
+| Runtime guardrail: prompt-injection defence, output filtering | `agent-guardrail-gateway` | NOT wired. There is no `GuardrailPort` here. Redaction through `pii-kit` is a different control. |
+| Governed knowledge base and grounded retrieval | `enterprise-knowledge-base` | Not used: this vertical performs no retrieval. A fork that adds one must integrate `enterprise-knowledge-base`. |
 | The operations control room and handover view | **F5** (`control-room-handover`) | F1 OWNS the ops-worklist export schema and F5 consumes it. Do not rebuild the queue view here. |
 | Disputes and chargebacks | **F2** | A sibling producer that conforms to the SAME export schema. A dispute is its journey, not this one's. |
 

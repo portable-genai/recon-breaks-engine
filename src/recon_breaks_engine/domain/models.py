@@ -148,7 +148,8 @@ class RankedBreak:
 
 @dataclass(frozen=True, slots=True)
 class BreakResolution:
-    """A drafted, maker-checker resolution for one break. Routed to Hrz7; it never auto-posts.
+    """A drafted, maker-checker resolution for one break. Routed to human-review-console; it never
+    auto-posts.
 
     The engine decides the break and its facts; a model may only NARRATE ``hypothesis`` and
     ``journal_note`` from those facts, and both are discarded on validation failure. The attribute

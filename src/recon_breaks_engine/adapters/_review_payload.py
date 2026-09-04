@@ -2,14 +2,14 @@
 
 Lives in the adapter layer, not the pure domain, because it depends on the kit. The subject, the
 summary and EVERY field of every citation (the locator and the title as well as the snippet) are
-redacted BEFORE they leave the process (the same redact-before-anything rule the audit write
-obeys), using the shared ``pii-kit``, so no raw identifier reaches Hrz7 over the wire; Hrz7
-redacts again before its own audit write (defence in depth). Canonicalisation has already masked
-these citations upstream, and this pass is deliberately kept anyway: this module converts
-whatever a caller hands it, and a boundary that trusts its input is a boundary only for the
-callers that happen to be correct today. ``maker`` and ``tenant`` are asserted here and trusted
-by Hrz7 because the caller is an authenticated S2S service; per-hop on-behalf-of token exchange
-is the deferred next layer.
+redacted BEFORE they leave the process (the same redact-before-anything rule the audit write obeys),
+using the shared ``pii-kit``, so no raw identifier reaches human-review-console over the wire;
+human-review-console redacts again before its own audit write (defence in depth). Canonicalisation
+has already masked these citations upstream, and this pass is deliberately kept anyway: this module
+converts whatever a caller hands it, and a boundary that trusts its input is a boundary only for the
+callers that happen to be correct today. ``maker`` and ``tenant`` are asserted here and trusted by
+human-review-console because the caller is an authenticated S2S service; per-hop on-behalf-of token
+exchange is the deferred next layer.
 """
 
 from __future__ import annotations
@@ -79,7 +79,7 @@ def _kit_citations(result: BreakResolution) -> tuple[KitCitation, ...]:
 
 
 def result_to_review(result: BreakResolution, *, maker: str, tenant: str = "") -> Review:
-    """Build the review a producer submits to Hrz7 when a result escalates."""
+    """Build the review a producer submits to human-review-console when a result escalates."""
     # Redact ONCE and reuse: the subject is a shared sink's field, so every place the subject
     # text reaches the wire (the case reference AND the idempotency key, not only the ``subject``
     # field) must carry the masked form. Deriving these from the raw subject leaked the identifier
@@ -97,6 +97,6 @@ def result_to_review(result: BreakResolution, *, maker: str, tenant: str = "") -
         sod_group="recon_breaks_engine-maker-checker",
         case_ref=subject,
         # Producer-owned, tenant-scoped key so a retried delivery is idempotent at the console.
-        source_key=f"F1:{subject}:{result.severity.value}",
+        source_key=f"recon-breaks-engine:{subject}:{result.severity.value}",
         citations=_kit_citations(result),
     )

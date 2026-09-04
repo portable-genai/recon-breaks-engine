@@ -87,7 +87,7 @@ the guard can go red rather than passing vacuously.
 
 ## What about outbound service-to-service calls?
 
-The routed review and the escalation case both go to Hrz7. The managed review router submits over
+The routed review and the escalation case both go to `human-review-console`. The managed review router submits over
 the shared `review-kit` with the OUTBOUND credentials `HUMAN_REVIEW_S2S_TOKEN` and
 `HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
 `RECONBREAKS_S2S_TOKEN`. The kit refuses a plaintext non-loopback URL and a missing bearer at
@@ -129,17 +129,17 @@ durable one. Set it when you set a durable `RECONBREAKS_AUDIT_PATH`. Operating r
 
 ## What is explicitly out of scope for this repo?
 
-- The runtime guardrail: prompt-injection defence and output filtering. That is **Hrz1**, and it
+- The runtime guardrail: prompt-injection defence and output filtering. That is `agent-guardrail-gateway`, and it
   is **not wired here**: there is no `GuardrailPort` in `ports/`. In-repo redaction is not the
   same control. This is the open R1 item in [`../../COMPLIANCE.md`](../../COMPLIANCE.md).
-- The governed knowledge base (**Hrz2**). Not applicable today: this service performs no
+- The governed knowledge base (`enterprise-knowledge-base`). Not applicable today: this service performs no
   retrieval.
-- Agent registration, identity and entitlements (**Hrz3**). The A2A card is published at
+- Agent registration, identity and entitlements (`agent-registry`). The A2A card is published at
   `/.well-known/agent-card.json`, but nothing registers it. Open R4 item.
-- The shared immutable audit sink and the trace store (**Hrz5**). Tracing exports OTLP to the Hrz5
+- The shared immutable audit sink and the trace store (`agent-observability`). Tracing exports OTLP to the `agent-observability`
   collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set; the audit sink is local or a locked Cloud
   Logging bucket, not the shared sink. Open R2 item.
-- The human-review console itself (**Hrz7**). This repo routes to it; it does not implement it.
+- The human-review console itself (`human-review-console`). This repo routes to it; it does not implement it.
 
 See [features-faq.md](features-faq.md) for the full boundary map and
 [compliance-faq.md](compliance-faq.md) for what that means for a control assessment.

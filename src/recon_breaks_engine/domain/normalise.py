@@ -11,10 +11,10 @@ Canonicalisation raises on a row it cannot parse rather than dropping it or gues
 silently dropped row is a reconciliation that quietly ignored money, which is the one thing this
 service exists to prevent.
 
-Being that boundary is also why the REDACTION of a row's citation lives here: it is the single
-place feed text becomes engine data, so masking it once covers every sink downstream (the WORM
-audit record, the Hrz7 review payload, the Hrz7 escalation case, the stored worklist and the API
-response) instead of once per sink. See :func:`_citation_for`.
+Being that boundary is also why the REDACTION of a row's citation lives here: it is the single place
+feed text becomes engine data, so masking it once covers every sink downstream (the WORM audit
+record, the human-review-console review payload, the human-review-console escalation case, the
+stored worklist and the API response) instead of once per sink. See :func:`_citation_for`.
 """
 
 from __future__ import annotations
@@ -98,7 +98,8 @@ def _citation_for(row: FeedRow) -> Citation:
     This is the one place a citation is minted, so it is the one place the mask has to go. The
     audit write used to redact ``redacted_summary`` and then hand the SAME event its citations
     untouched, so an identifier the summary had just lost was persisted verbatim in the immutable
-    row beside it; the Hrz7 payload masked the snippet and left the source_id and the title; the
+    row beside it; the human-review-console payload masked the snippet and left the source_id and
+    the title; the
     escalation case and the worklist the API returns masked nothing at all. Fixing that at each
     of those sinks means getting it right four times and forgetting it on the fifth, so it is
     fixed HERE, where raw feed text crosses into the engine and before anything downstream exists

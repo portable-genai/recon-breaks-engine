@@ -2,19 +2,16 @@
 
 This is the one place the pieces meet, and the order is deliberate and load-bearing:
 
-1. read raw cited rows from the feed port (no arithmetic in the adapter);
-2. canonicalise them (pure);
-3. reconcile with the deterministic multi-pass matcher (pure);
-4. rank the residual breaks (pure);
-5. for each break, DRAFT a resolution: the engine authors every fact and the journal note; a
-   model may narrate a prose HYPOTHESIS from those facts, and its draft is redacted before the
-   call, groundedness-checked after it, and DISCARDED for a deterministic note on any failure;
-6. every resolution sets ``requires_human_review`` and is ROUTED to Hrz7 through the review kit
-   (rule R8): this service ships no posting port at all, so a drafted journal is text a human
-   keys into the ledger and nothing here can auto-post;
-7. a break that BREACHES its aging or amount threshold additionally opens an escalation case on
-   the Hrz7 case spine, with a clock taken from policy;
-8. every step writes an already-redacted audit event.
+1. read raw cited rows from the feed port (no arithmetic in the adapter); 2. canonicalise them
+   (pure); 3. reconcile with the deterministic multi-pass matcher (pure); 4. rank the residual
+   breaks (pure); 5. for each break, DRAFT a resolution: the engine authors every fact and the
+   journal note; a model may narrate a prose HYPOTHESIS from those facts, and its draft is redacted
+   before the call, groundedness-checked after it, and DISCARDED for a deterministic note on any
+   failure; 6. every resolution sets ``requires_human_review`` and is ROUTED to human-review-console
+   through the review kit (rule R8): this service ships no posting port at all, so a drafted journal
+   is text a human keys into the ledger and nothing here can auto-post; 7. a break that BREACHES its
+   aging or amount threshold additionally opens an escalation case on the human-review-console case
+   spine, with a clock taken from policy; 8. every step writes an already-redacted audit event.
 
 The consequential decisions (reconcile, break type, rank, breach, severity) are all in steps 2-4
 and 7 and are pure and replayable. The model touches only step 5's prose.
@@ -240,9 +237,11 @@ class ResolutionService:
         )
 
     def _open_case(self, brk: Break, *, as_of: date, actor: str, tenant: str) -> None:
-        """Open the escalation case on the Hrz7 spine, with the counterparty name masked.
+        """Open the escalation case on the human-review-console spine, with the counterparty name
+        masked.
 
-        Hrz7 is a shared sink, so this is an outbound crossing and the same rule applies as to
+        human-review-console is a shared sink, so this is an outbound crossing and the same rule
+        applies as to
         the review payload: the case carries ``counterparty_key`` verbatim, and a
         counterparty name is where a nominee account's underlying national identifier sits. The
         citations arrive already masked from canonicalisation; this field is the one the engine

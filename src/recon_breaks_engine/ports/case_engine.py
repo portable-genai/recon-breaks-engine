@@ -1,11 +1,12 @@
-"""CaseEnginePort: open an escalation case with an aging clock, on the Hrz7 case spine.
+"""CaseEnginePort: open an escalation case with an aging clock, on the human-review-console case
+spine.
 
-Aged or high-value breaks open a case whose workflow and regulatory/aging clock come from Hrz7's
-case engine as deployment CONFIGURATION (a ``WorkflowDefinition`` carrying a
-``ClockSpec``), driven over Hrz7's ``/v1/cases`` surface. The BREACH decision (is this break old
-enough or large enough to escalate?) is the deterministic engine's, made before this port is
-called; the port only opens the case and reports the deadline the clock implies. An adapter never
-decides breach, and it never closes a case on its own.
+Aged or high-value breaks open a case whose workflow and regulatory/aging clock come from
+human-review-console's case engine as deployment CONFIGURATION (a ``WorkflowDefinition`` carrying a
+``ClockSpec``), driven over human-review-console's ``/v1/cases`` surface. The BREACH decision (is
+this break old enough or large enough to escalate?) is the deterministic engine's, made before this
+port is called; the port only opens the case and reports the deadline the clock implies. An adapter
+never decides breach, and it never closes a case on its own.
 """
 
 from __future__ import annotations
