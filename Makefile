@@ -1,5 +1,5 @@
 .PHONY: install install-unlocked lock lint fmt test test-integration eval plugin gate audit run-api \
-        demo demo-selftest demo-static demo-server portability docs-check \
+        demo demo-selftest demo-static demo-server portability docs-check tf-check \
         ui-install ui-check ui-dev drop-ui
 
 # Name the offline profile DELIBERATELY. Absence is not consent: an unset profile variable is a
@@ -108,6 +108,15 @@ portability:
 # Relative links resolve, code fences close, no em-dash or en-dash in shipped prose.
 docs-check:
 	$(PYRUN) scripts/check_docs_links.py
+
+# The offline-gate workflow runs `terraform test` against infra/terraform (repository-policy.json
+# sets terraform_test: true), so this reproduces that check locally in one command rather than
+# leaving it as a CI-only fact.
+tf-check:
+	terraform -chdir=infra/terraform init -backend=false -input=false
+	terraform -chdir=infra/terraform validate
+	terraform -chdir=infra/terraform fmt -check -recursive
+	terraform -chdir=infra/terraform test
 
 # --------------------------------------------------------------------------------------- #
 # The ui/ micro-frontend. Requires node; nothing in `make gate` does.
