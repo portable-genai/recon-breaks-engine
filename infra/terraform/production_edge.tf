@@ -108,11 +108,18 @@ resource "google_cloud_run_v2_service" "api" {
         name  = "GCP_REGION"
         value = local.region
       }
-      # Rule R8: the console an escalation is routed to. Required whenever the edge is enabled
-      # (variables.tf), because the managed router refuses rather than swallowing one.
+      # Rule R8: the console an escalation is routed to and a breaching break's case opens on.
+      # Required whenever the edge is enabled (variables.tf), because the service refuses to boot
+      # without one.
       env {
         name  = "HUMAN_REVIEW_URL"
         value = var.human_review_url
+      }
+      # The review-routing switch, stated rather than inherited: a cheap runtime control, on in
+      # the reference. Off is a deployment choice the service logs at startup.
+      env {
+        name  = "${local.render_env_prefix}_REVIEW_ROUTING"
+        value = tostring(var.review_routing_enabled)
       }
 
       # The three variables below are set only when they carry a value. This service reads its

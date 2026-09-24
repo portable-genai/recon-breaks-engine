@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -83,6 +84,10 @@ class ReconcileResponse(BaseModel):
     breaks: list[RankedBreakModel]
     resolutions: list[ResolutionModel]
     requires_human_review: bool
+    #: What happened to the run's human-review hand-offs: routed, failed, off or not_required.
+    #: ``failed`` means at least one drafted resolution is NOT queued for review, and the console
+    #: says so.
+    review_routing: Literal["routed", "failed", "off", "not_required"] = "not_required"
     #: The ops-worklist export (the F5 data contract) computed from this run.
     export: dict[str, object]
     #: The durable, tenant-scoped handle the ranked worklist was persisted under, so a client can
@@ -91,7 +96,12 @@ class ReconcileResponse(BaseModel):
 
     @classmethod
     def from_domain(
-        cls, run: ReconRun, *, feed_id: str, worklist_id: str = ""
+        cls,
+        run: ReconRun,
+        *,
+        feed_id: str,
+        worklist_id: str = "",
+        review_routing: str = "not_required",
     ) -> ReconcileResponse:
         return cls(
             as_of=run.as_of.isoformat(),
@@ -124,6 +134,7 @@ class ReconcileResponse(BaseModel):
                 for r in run.resolutions
             ],
             requires_human_review=run.requires_human_review,
+            review_routing=review_routing,  # type: ignore[arg-type]
             export=build_worklist_export(
                 run, feed_id=feed_id, as_of=run.as_of, aging=ReconPolicy.default().aging
             ),

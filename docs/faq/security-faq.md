@@ -91,8 +91,9 @@ The routed review and the escalation case both go to `human-review-console`. The
 the shared `review-kit` with the OUTBOUND credentials `HUMAN_REVIEW_S2S_TOKEN` and
 `HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately distinct variables from this service's own INBOUND
 `RECONBREAKS_S2S_TOKEN`. The kit refuses a plaintext non-loopback URL and a missing bearer at
-construction, and the managed router REFUSES when no console is configured rather than swallowing
-the escalation.
+construction. Under the managed profile a deployment with no console configured REFUSES TO BOOT,
+and a hand-off that fails at request time is reported to the caller as
+`review_routing: "failed"` and logged rather than swallowing the escalation.
 
 ## Are there secrets in the repo?
 
