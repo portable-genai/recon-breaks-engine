@@ -267,9 +267,17 @@ variable "human_review_url" {
   }
 
   validation {
+    # Not relaxed when review routing is switched off: the managed case engine opens every
+    # breaching break's escalation case on the same console, and it is not a switchable control.
     condition     = !var.production_edge_enabled || can(regex("^https://", var.human_review_url))
-    error_message = "production_edge_enabled requires human_review_url (rule R8): the managed review router refuses to run with no console configured."
+    error_message = "production_edge_enabled requires human_review_url (rule R8): the service refuses to boot with no console named, because the case engine opens escalation cases there even with review_routing_enabled = false."
   }
+}
+
+variable "review_routing_enabled" {
+  description = "Switch review routing to the human-review-console (the service's _REVIEW_ROUTING variable). A cheap runtime control: on in the reference, reversible, so it takes a default."
+  type        = bool
+  default     = true
 }
 
 variable "quality_service_url" {

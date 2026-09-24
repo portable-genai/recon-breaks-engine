@@ -67,6 +67,7 @@ from hex_service_kit.web import (
     make_require_service_caller,
 )
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import (
     LOCAL_PROFILE,
     Container,
@@ -299,10 +300,14 @@ def reconcile(
     from datetime import date
 
     container = _container()
+    # Every drafted resolution is handed off inside the service; the recording wrapper lets the
+    # response say what happened to those hand-offs, and keeps a failed one from failing an
+    # already-reconciled, already-audited run (the fleet's runtime-control contract).
+    routing = RecordingReviewRouter(container.review_router)
     service = ResolutionService(
         feeds=container.feeds,
         generation=container.generation,
-        review_router=container.review_router,
+        review_router=routing,
         audit=container.audit,
         case_engine=container.case_engine,
         tracer=container.tracer,
@@ -329,7 +334,9 @@ def reconcile(
             ranked_breaks=run.ranked_breaks,
         )
     )
-    return ReconcileResponse.from_domain(run, feed_id=feed_id, worklist_id=worklist_id)
+    return ReconcileResponse.from_domain(
+        run, feed_id=feed_id, worklist_id=worklist_id, review_routing=routing.outcome.value
+    )
 
 
 @app.get("/v1/worklist/{worklist_id}", response_model=WorklistResponse, tags=["artifacts"])

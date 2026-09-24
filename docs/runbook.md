@@ -140,10 +140,19 @@ see `config.ProfileChoice`.
 Set `HUMAN_REVIEW_URL` to the `human-review-console` (HTTPS is required off loopback) and provide
 `HUMAN_REVIEW_S2S_TOKEN`; `HUMAN_REVIEW_S2S_SIGNING_KEY` optionally signs the propagated actor. These are the
 OUTBOUND credentials and are deliberately distinct from this service's own inbound
-`RECONBREAKS_S2S_TOKEN`. With the URL unset, the managed router REFUSES rather
-than swallowing the escalation, so a misconfiguration is a loud failure and never a silent
-auto-execution. Under the local profile the escalation goes to the review-kit outbox, which is
-inspectable and flushes to the console when one becomes reachable.
+`RECONBREAKS_S2S_TOKEN`. With the URL unset, the managed profile REFUSES TO BOOT, so a
+misconfiguration is a loud failure at startup rather than at the first escalation.
+Under the local profile the escalation goes to the review-kit outbox, which is inspectable and
+flushes to the console when one becomes reachable.
+
+`RECONBREAKS_REVIEW_ROUTING` switches routing, read in three states: unset is on, `true`/`false`
+(or `on`/`off`) wins, and an emptied or unrecognised value refuses at boot. Off still needs the
+console under the managed profile, because the case engine opens every breaching break's
+escalation case there and has no switch. Off logs one warning at startup, and every
+reconciliation reports `review_routing: "off"`. A hand-off that fails at request time does not
+fail the reconciliation: the response carries `review_routing: "failed"`, the failure is logged,
+and the console says the item is not queued for review. Terraform states the switch as
+`review_routing_enabled`.
 
 ## Supply chain
 Installs come from the committed lockfiles. After changing a dependency run `make lock` and commit

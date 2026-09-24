@@ -13,6 +13,7 @@ from datetime import date
 
 from hex_service_kit.logging import configure_logging
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import build_container
 from ..domain.resolution_service import ResolutionService
 
@@ -36,10 +37,11 @@ def main(argv: list[str] | None = None) -> int:
     configure_logging(container.settings.profile, service="recon-breaks-engine")
 
     if args.command == "reconcile":
+        routing = RecordingReviewRouter(container.review_router)
         service = ResolutionService(
             feeds=container.feeds,
             generation=container.generation,
-            review_router=container.review_router,
+            review_router=routing,
             audit=container.audit,
             case_engine=container.case_engine,
             tracer=container.tracer,
@@ -67,6 +69,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"amount={brk.amount_minor} {brk.currency} age={brk.age_days}d score={rb.score}"
             )
         print(f"  requires_human_review: {run.requires_human_review}")
+        print(f"  human review hand-off : {routing.outcome.value}")
         return 0
 
     return 2  # pragma: no cover - argparse requires a subcommand

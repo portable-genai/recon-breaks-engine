@@ -21,6 +21,7 @@ from typing import Any
 
 from pii_kit import redact
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import Container, Settings, build_container
 from ..domain.pii import PII_PATTERNS
 from ..domain.resolution_service import ResolutionService
@@ -70,13 +71,16 @@ def reconcile_feeds(
     Returns:
       A JSON-safe dict with every string masked for personal data (P-04: a tool result goes into
       a model's context): the match count, the ranked breaks (type, score, entry ids), and the
-      run-level ``requires_human_review`` flag.
+      run-level ``requires_human_review`` flag, and ``review_routing``: ``routed``, ``failed``
+      (a hand-off failed and that resolution is NOT queued for review), ``off`` (routing is
+      switched off) or ``not_required``.
     """
     container = _container(settings)
+    routing = RecordingReviewRouter(container.review_router)
     service = ResolutionService(
         feeds=container.feeds,
         generation=container.generation,
-        review_router=container.review_router,
+        review_router=routing,
         audit=container.audit,
         case_engine=container.case_engine,
         tracer=container.tracer,
@@ -106,7 +110,10 @@ def reconcile_feeds(
             for rb in run.ranked_breaks
         ],
     }
-    return _redacted(payload)  # type: ignore[no-any-return]
+    redacted: dict[str, Any] = _redacted(payload)
+    # Attached after the redaction pass: it is a fixed routing outcome, not narrative text.
+    redacted["review_routing"] = routing.outcome.value
+    return redacted
 
 
 def verify_audit_trail(settings: Settings | None = None) -> dict[str, Any]:
