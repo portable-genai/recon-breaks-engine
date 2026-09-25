@@ -11,7 +11,9 @@ the guarantee.
 
 from __future__ import annotations
 
-from ...config import Settings
+from hex_service_kit import provenance
+
+from ...config import OFFLINE_STUB_MODEL, Settings
 
 _BY_TYPE: dict[str, str] = {
     "timing": "The two feeds appear to record the same item on different value dates.",
@@ -35,4 +37,7 @@ class LocalGenerationAdapter:
             if line.startswith("break_type:"):
                 break_type = line.split(":", 1)[1].strip()
                 break
+        # What answered this narration, for the console's model pill: the same name
+        # `generator_model` reports under this binding, so the configured and answered pills agree.
+        provenance.note_model(OFFLINE_STUB_MODEL)
         return _BY_TYPE.get(break_type, _FALLBACK)
