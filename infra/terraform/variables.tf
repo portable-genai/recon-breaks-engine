@@ -11,8 +11,10 @@
 #   P-07 (auditability and retention): `retention_days` is a variable because the WORM bucket
 #         lock is irreversible, so the retention window has to be a deliberate decision.
 #   P-06 / R8 (maker-checker): `human_review_url` is required when the serving edge is
-#         enabled, because the managed review router refuses to swallow an escalation with no
-#         console configured. A deploy that would ship R8 unwired fails at plan time.
+#         enabled, because the service refuses to boot under the managed profile with no
+#         console named: the case engine opens its escalation cases there even with
+#         `review_routing_enabled = false`. A deploy that would ship R8 unwired fails at
+#         plan time.
 #
 # Two deploy paths are supported:
 #   - QUICK EVALUATION (project-scoped, no org-level roles): project_id plus
@@ -254,9 +256,10 @@ variable "human_review_url" {
   description = <<-EOT
     The human-review-console the managed review router submits escalations to
     (HUMAN_REVIEW_URL). Rule R8 says an escalation is ROUTED and never merely flagged,
-    and the managed router refuses rather than swallowing one when this is empty, so the
+    and the service refuses to boot under the managed profile with this empty (the case
+    engine opens escalation cases on the console even with review routing off), so the
     serving edge requires it: a deploy that would ship R8 unwired fails here instead of at
-    the first escalation. HTTPS is required, because the payload carries a redacted result.
+    boot. HTTPS is required, because the payload carries a redacted result.
   EOT
   type        = string
   default     = ""
