@@ -119,9 +119,9 @@ before every commit rather than waiting for a CI tick that will not arrive.
 - The **managed profile does not serve**. `managed_readiness.py` names the BigQuery feed fetch,
   the managed generation draft and all three worklist-store methods as construction-only, and the
   API preflight refuses to start a `gcp` process while any of them is active.
-- The **`ui/` console is not wired to this vertical**. Its security boundary is complete and
-  tested, but the page still calls the template's `/v1/triage` route, which this service does not
-  serve. Point it at `/v1/reconcile` and build the worklist views.
+- The **`ui/` console is minimal**. It reconciles a named feed pair through `/v1/reconcile` and
+  shows the stored worklist from `/v1/worklist/{worklist_id}` as plain ranked text; the richer
+  worklist views (filtering, per-break drill-down, the drafted notes) are still to build.
 - **`agent-guardrail-gateway`, `enterprise-knowledge-base`, `agent-registry` and the shared `agent-observability` sink are not bound.** See the R1 to R5 rows in
   [`../../COMPLIANCE.md`](../../COMPLIANCE.md) and the boundary table in
   [features-faq.md](features-faq.md).

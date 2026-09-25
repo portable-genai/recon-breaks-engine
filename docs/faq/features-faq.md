@@ -93,13 +93,16 @@ it: the FastAPI app (`POST /v1/reconcile`, `GET /v1/worklist/{worklist_id}`), th
 (`recon_breaks_engine reconcile <feed_a> <feed_b>`), the agent tools (`reconcile_feeds` and
 `verify_audit_trail`, advertised on the A2A card at `/.well-known/agent-card.json`), the
 embeddable micro-frontend in `ui/`, and the eval harness. Each of them routes an escalated result
-to human review in the same call that produced it, so rule R8 does not hold on four surfaces out
-of five.
+to human review in the same call that produced it, so rule R8 holds on all five surfaces rather
+than on four out of five.
 
-**Honest exception.** The `ui/` micro-frontend is fully built as a security boundary but its page
-still calls the template's `/v1/triage` endpoint, which this service does not serve. The console
-is not yet wired to this vertical's `/v1/reconcile` route, so treat the UI as a hardened shell
-awaiting its views, not as a working break worklist.
+**The `ui/` console.** The micro-frontend is a security boundary and a working, minimal break
+worklist. Its page posts `{feed_a, feed_b, as_of}` to `POST /v1/reconcile`, prefilled with the
+fixture pair the local profile serves (`nostro` against `scheme`, as of the fixed `2026-08-08`
+instant), then reads the persisted ranked worklist back through `GET /v1/worklist/{worklist_id}`
+and shows it with the full run response beside it. It is not a finished worklist view: there is no
+filtering, sorting or per-break drill-down, and the feed names are suggestions rather than a list
+the service publishes.
 
 ### Which capabilities does this repo own versus integrate?
 
