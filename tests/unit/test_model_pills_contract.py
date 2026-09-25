@@ -1,16 +1,18 @@
-"""The provenance the UI banner states must be true of the profile the service is running.
+"""What the console's model pill states before any answer must be true of the running profile.
 
-Every served console names, at the top of every page, WHERE it is running and WHICH model
-answers (org decision, 2026-08-30). Both halves come from ``/healthz`` because the browser
-cannot know either: a console that read its runtime from ``window.location`` would be right
-until the day the deployment served through a proxy, and wrong silently after that.
+Every served console shows two pills at the top right of every page: the model that answered,
+and ``Search`` when it searched (owner decision, 2026-09-23). Until the first answer arrives the
+model pill shows ``generator_model`` from ``/healthz``, with WHERE it runs (``runtime``) in its
+title. Both come from ``/healthz`` because the browser cannot know either: a console that read
+its runtime from ``window.location`` would be right until the day the deployment served through
+a proxy, and wrong silently after that. What answered is proved in ``test_answer_provenance.py``.
 
-The reason this is worth a test rather than a glance is what the banner is FOR. These systems
-are demonstrated on a laptop and on a deployment, sometimes in the same hour, and a screenshot
-of one is indistinguishable from the other. A banner that was merely present but wrong is worse
-than no banner: it converts "the viewer does not know" into "the viewer has been told the wrong
-thing", and the wrong thing here is whether a figure came from a managed model or from a
-deterministic offline stub.
+The reason this is worth a test rather than a glance is what the pill is FOR. These systems are
+demonstrated on a laptop and on a deployment, sometimes in the same hour, and a screenshot of one
+is indistinguishable from the other. A pill that was merely present but wrong is worse than no
+pill: it converts "the viewer does not know" into "the viewer has been told the wrong thing", and
+the wrong thing here is whether a figure came from a managed model or from a deterministic
+offline stub.
 
 So the assertions below are about AGREEMENT with the profile, not about presence.
 """
@@ -59,7 +61,7 @@ def test_the_runtime_half_states_where_the_process_runs(profile: str) -> None:
 
 @pytest.mark.parametrize("profile", ["local", "gcp", "onprem"])
 def test_the_model_half_is_always_answered(profile: str) -> None:
-    """A blank is not an option: the banner renders nothing rather than render a falsehood."""
+    """A blank is not an option: the pill renders nothing rather than render a falsehood."""
     assert _for_profile(profile).generator_model.strip()
 
 
@@ -67,7 +69,7 @@ def test_the_model_half_is_always_answered(profile: str) -> None:
 def test_no_offline_profile_claims_a_managed_model(profile: str) -> None:
     """The defect that matters, stated as an assertion.
 
-    A laptop run naming a Gemini model is precisely the confusion the banner exists to remove,
+    A laptop run naming a Gemini model is precisely the confusion the pill exists to remove,
     and it is the one direction a reviewer cannot detect by looking at the page.
     """
     answer = _for_profile(profile).generator_model
@@ -94,7 +96,7 @@ def test_the_health_contract_carries_both_halves() -> None:
 
 
 def test_the_endpoint_answers_from_settings_rather_than_a_literal() -> None:
-    """A banner hard-coded at the endpoint would be right once and wrong after the next rebind.
+    """A pill hard-coded at the endpoint would be right once and wrong after the next rebind.
 
     Both halves are properties of :class:`Settings`, so the values the endpoint sends are the
     values the profile implies; this pins that they are readable and non-empty together, which
